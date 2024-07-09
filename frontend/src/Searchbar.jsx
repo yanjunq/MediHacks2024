@@ -13,7 +13,7 @@ function Searchbar() {
       <input 
         type="text" 
         name="Ask" 
-        placeholder="Search..." 
+        placeholder="How can I help you today? Type in your symptoms to get started..." 
         className="search-input"
       />
       <button type="submit" className="search-button">Ask</button>
