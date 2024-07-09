@@ -1,4 +1,5 @@
-
+import React, { useEffect } from 'react';
+import axios from 'axios';
 
 function Searchbar() {
   const handleSearch = (event) => {
@@ -8,16 +9,39 @@ function Searchbar() {
     // Implement search functionality
   };
 
+  const acceptTermsOfUse = async () => {
+    const response = await axios.post('http://api.endlessmedical.com/v1/dx/AcceptTermsOfUse?SessionID=' + id + '&passphrase=I have read, understood and I accept and agree to comply with the Terms of Use of EndlessMedicalAPI and Endless Medical services. The Terms of Use are available on endlessmedical.com')
+    console.log(response.data)
+  }
+
+  var id = []
+
+  useEffect(() => {
+    const initSession = async () =>{
+      const response = await axios.get('http://api.endlessmedical.com/v1/dx/InitSession')
+      const result = await response.data
+      id = result.SessionID
+      console.log(result)
+      console.log(result.SessionID)
+     
+    }
+    initSession();
+  }, []); 
   return (
-    <form className="search-bar" onSubmit={handleSearch}>
-      <input 
-        type="text" 
-        name="Ask" 
-        placeholder="How can I help you today? Type in your symptoms to get started..." 
-        className="search-input"
-      />
-      <button type="submit" className="search-button">Ask</button>
-    </form>
+    <div>
+      <button onClick={acceptTermsOfUse}>
+        "Agree to terms of services"
+      </button>
+      <form className="search-bar" onSubmit={handleSearch}>
+        <input 
+          type="text" 
+          name="search" 
+          placeholder="How can I help you today? Type in your symptoms to get started..." 
+          className="search-input"
+        />
+        <button type="submit" className="search-button">Ask</button>
+      </form>
+    </div>
   );
 }
 
