@@ -91,12 +91,18 @@ body {
   font-family: Helvetica, Helvetica Neue, Arial, sans-serif;;
 }
 
+/* Card */
 .card {
+  width: 250px;
+  height: auto;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   border: 1px solid white;
   border-radius: 10px;
   box-shadow: gray 5px 5px 10px;
   padding: 20px;
   margin: 10px;
+  margin-left: 100px;
+  margin-top: 20px;
   text-align: center;
   max-width: 250px;
   display: inline-block;
@@ -110,7 +116,25 @@ body {
 }
 
 .card .card-title {
+  margin: 10px;
+  color: rgb(76, 73, 73);
+}
 
+.card .card-text {
+  font-size: 1em;
+  margin: 10px;
+  color: rgb(76, 73, 73);
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card-container {
+  
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 /* Search Bar */
@@ -150,9 +174,10 @@ body {
   color: white;
 }
 
-
-
 /* Footer */
 footer {
-
+  margin: 0;
+  background: rgba(156, 155, 155, 0.587);
+  padding: 1px;
+  margin-top: -5px;
 }
