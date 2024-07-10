@@ -20,6 +20,8 @@ a:hover{
   text-decoration: underline;
 }
 
+/* Navigator */
+
 nav ul {
   margin: 0;
   padding: 0;
@@ -43,6 +45,42 @@ li:first-child{
 li:hover {
   background-color: gray;
   border-radius: 3px;
+}
+
+/* Navbar design */
+
+.contact {
+  position: relative;
+}
+
+.dropMenu {
+  display: none;
+  position: absolute;
+  top: 100%; 
+  background-color: white;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  white-space: normal; 
+  z-index: 1000;
+  box-sizing: border-box;
+  min-width: 300px; 
+  max-width: 100vw;
+}
+
+.contact:hover .dropMenu {
+  display: block; 
+}
+
+.dropMenu p {
+  margin: 0;
+  padding: 10px 10px;
+  color: black;
+  word-wrap: break-word;
+}
+
+.navlist .nav:last-child:hover .dropMenu {
+  right: 0;
 }
 
 /* body */
