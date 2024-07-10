@@ -53,12 +53,11 @@ const Home = ()=>{
             <Searchbar getQuery={getSearchQuery}/>
 
             <div className="card-container">
-                <button onClick={handleSearch}>
-                    <Card img={"https://via.placeholder.com/200"}
-                    title={"Health Tips"}
-                    text={"Get Health Tips"}
-                    />
-                </button>
+                <Card img={"https://via.placeholder.com/200"}
+                title={"Health Tips"}
+                text={"Get Health Tips"}
+                onClick={handleSearch}
+                />
                 <Card img={"https://via.placeholder.com/200"}
                 title={"Today's Health News"}
                 text={"set up later"}
