@@ -1,15 +1,23 @@
 
-function Card() {
+import React, {useState, useRef, useEffect} from 'react';
+import axios from 'axios';
+import { config } from 'dotenv';
+
+const Card =() => {
+
+
+    useEffect(()=>{
+        getSearchQuery();
+        // handleSearch();
+    },[])
+
   return(
-    <div className="card">
-      <img className="card-image" src="https://via.placeholder.com/200" alt="pic1" />
-      <h2 className="card-title">Health Tips</h2>
-      <p>Set up later</p>
+    <>
+    </>
 
-
-
-    </div>
   );
 }
 
+
 export default Card
+

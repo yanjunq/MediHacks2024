@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function Searchbar() {
-  const handleSearch = (event) => {
+function Searchbar({getQuery}) {
+
+  const handleSearch = async (event) => {
     event.preventDefault();
     const query = event.target.search.value;
+    getQuery(query);
     console.log('Search query:', query);
     // Implement search functionality
   };
@@ -27,6 +30,7 @@ function Searchbar() {
     }
     initSession();
   }, []); 
+
   return (
     <div>
       <button onClick={acceptTermsOfUse}>
