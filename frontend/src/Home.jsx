@@ -5,7 +5,7 @@ import Footer from "./Footer"
 import Card from './Card';
 
 // import.meta.env.CRAWLER_API_KEY
-
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const Home = ()=>{
 
   const[searchQuery, setSearchQuery] = useState('');
@@ -85,7 +85,7 @@ const Home = ()=>{
 
         useEffect(() => {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCItTySjdIz4RXvv2f4233gc3O8Dso9oX8&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
     script.async = true;
     script.onload = () => {
       // Call function to initialize the map after script is loaded
