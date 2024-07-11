@@ -4,12 +4,33 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Searchbar({getQuery}) {
 
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [id, setID] = useState('');
+  const [features, setFeatures] = useState('');
+
   const handleSearch = async (event) => {
     event.preventDefault();
     const query = event.target.search.value;
     getQuery(query);
     console.log('Search query:', query);
     // Implement search functionality
+    var response = await axios.post('http://api.endlessmedical.com/v1/dx/UpdateFeature?SessionID=' + id + '&name=Chills&value=1')
+    var response = await axios.get('http://api.endlessmedical.com/v1/dx/Analyze?SessionID=' + id)
+    console.log(response.data.Diseases)
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    if (value.length > 0) {
+      const filteredSuggestions = features.filter(item =>
+        item.toLowerCase().includes(value.toLowerCase())
+      ).slice(0, 5);
+      setSuggestions(filteredSuggestions);
+    } else {
+      setSuggestions([]);
+    }
   };
 
   const acceptTermsOfUse = async () => {
@@ -17,19 +38,24 @@ function Searchbar({getQuery}) {
     console.log(response.data)
   }
 
-  var id = []
+  
 
   useEffect(() => {
     const initSession = async () =>{
-      const response = await axios.get('http://api.endlessmedical.com/v1/dx/InitSession')
+      var response = await axios.get('http://api.endlessmedical.com/v1/dx/InitSession')
       const result = await response.data
-      id = result.SessionID
+      setID(result.SessionID)
       console.log(result)
       console.log(result.SessionID)
-     
+
+      response = await axios.get('http://api.endlessmedical.com/v1/dx/GetFeatures')
+      setFeatures(response.data.data)
+      console.log("new feature " + features)
     }
     initSession();
   }, []); 
+
+  
 
   return (
     <div>
@@ -42,7 +68,17 @@ function Searchbar({getQuery}) {
           name="search" 
           placeholder="How can I help you today? Type in your symptoms to get started..." 
           className="search-input"
+          onChange={handleInputChange}
         />
+          {suggestions.length > 0 && (
+          <ul className="suggestions-list">
+            {suggestions.map((suggestion, index) => (
+              <li key={index} className="suggestion-item">
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
         <button type="submit" className="search-button">Ask</button>
       </form>
     </div>
