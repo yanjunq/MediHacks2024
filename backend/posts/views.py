@@ -43,3 +43,30 @@ def fetch_health_tips(request):
         return JsonResponse(results["video_results"], safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+from django.http import JsonResponse
+import requests
+
+def get_nearby_hospitals(request):
+    api_key = settings.TOMTOM_API_KEY
+    longitude = request.GET.get('longitude', '')
+    latitude = request.GET.get('latitude', '')
+
+    url = f"https://api.tomtom.com/search/2/categorySearch/hospital.json?key=2ly4DpPSnxYPBb1r8Ic3xpztZNzYAZXq&lat={latitude}&lon={longitude}"
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        hospitals = []
+        for hospital in data['results']:
+            name = hospital['poi']['name']
+            distance = hospital['dist']
+            address = hospital['address']['freeformAddress']  # Adjust this according to TomTom API response structure
+            latitude = hospital['position']['lat']
+            longitude = hospital['position']['lon']
+            hospitals.append({'name': name, 'distance': distance, 'address': address, 'latitude': latitude, 'longitude': longitude})
+        return JsonResponse({'hospitals': hospitals})
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({'error': str(e)}, status=500)
+

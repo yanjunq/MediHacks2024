@@ -154,3 +154,4 @@ SESSION_CACHE_ALIAS = "default"
 
 
 CRAWLER_API_KEY = os.getenv('CRAWLER_API_KEY')
+TOMTOM_API_KEY = os.getenv('TOMTOM_API_KEY')
