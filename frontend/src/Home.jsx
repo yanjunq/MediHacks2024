@@ -5,7 +5,7 @@ import Footer from "./Footer"
 import Card from './Card';
 
 // import.meta.env.CRAWLER_API_KEY
-
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const Home = ()=>{
 
   const[searchQuery, setSearchQuery] = useState('');
@@ -85,7 +85,7 @@ const Home = ()=>{
 
         useEffect(() => {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCItTySjdIz4RXvv2f4233gc3O8Dso9oX8&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
     script.async = true;
     script.onload = () => {
       // Call function to initialize the map after script is loaded
@@ -134,13 +134,14 @@ const Home = ()=>{
                 )) : null}
             </div>
             </div>
+
+            <div id="map" style={{ height: '400px', width: '100%' }}></div>
+            
             <div className="wavy-divider">
                 <svg viewBox="0 0 1440 320">
                     <path fill="#00bfff" fillOpacity="0.7" d="M0,96L48,128C96,160,192,224,288,213.3C384,203,480,117,576,117.3C672,117,768,203,864,213.3C960,224,1056,160,1152,128C1248,96,1344,96,1392,96L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
                 </svg>
             </div>
-
-            <div id="map" style={{ height: '400px', width: '100%' }}></div>
             <Footer/>
         </>
     );

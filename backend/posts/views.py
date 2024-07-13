@@ -49,10 +49,11 @@ import requests
 
 def get_nearby_hospitals(request):
     api_key = settings.TOMTOM_API_KEY
+    print(api_key)
     longitude = request.GET.get('longitude', '')
     latitude = request.GET.get('latitude', '')
 
-    url = f"https://api.tomtom.com/search/2/categorySearch/hospital.json?key=2ly4DpPSnxYPBb1r8Ic3xpztZNzYAZXq&lat={latitude}&lon={longitude}"
+    url = f"https://api.tomtom.com/search/2/categorySearch/hospital.json?key={api_key}&lat={latitude}&lon={longitude}"
 
     try:
         response = requests.get(url)
