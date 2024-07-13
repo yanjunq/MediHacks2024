@@ -88,12 +88,10 @@ const Home = ()=>{
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
     script.async = true;
     script.onload = () => {
-      // Call function to initialize the map after script is loaded
       initMap(nearbyHospitals);
     };
     document.head.appendChild(script);
 
-    // Clean up script
     return () => {
       document.head.removeChild(script);
     };
