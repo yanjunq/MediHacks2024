@@ -1,33 +1,10 @@
-# from django.shortcuts import render
-# from django.core.cache import cache
-# import requests
-# from django.http import JsonResponse
-# from django.conf import settings
-
-
-
-
-
-# def fetch_health_tips(request):
-#     search_query = request.GET.get('query', 'health tips')
-#     input_query = f"how to reduce {search_query}" 
-
-#     # api_key = settings.SERP_API_KEY
-#     api_key = "02cb346c5cded4dda5214e485e864d3472b5fe05b3523a28ef83aa9f94a176c5"
-#     try:
-#         response = requests.get(f"https://serpapi.com/search.json?q={input_query}&hl=en&gl=us&api_key={api_key}")
-#         # response_data = response.json()
-#         return JsonResponse(response)
-#     except Exception as e:
-#         return JsonResponse({'error': str(e)}, status=500)
-
 from django.http import JsonResponse
 from django.conf import settings
 from serpapi import GoogleSearch
 
 def fetch_health_tips(request):
     search_query = request.GET.get('query', 'health tips')
-    input_query = f"how to reduce {search_query.replace(' ', '+')}" if search_query else 'health tips'
+    input_query = f"how to reduce {search_query}" if search_query else 'health tips'
     api_key = settings.CRAWLER_API_KEY
 
     params = {
@@ -53,10 +30,11 @@ import requests
 
 def get_nearby_hospitals(request):
     api_key = settings.TOMTOM_API_KEY
+    print(api_key)
     longitude = request.GET.get('longitude', '')
     latitude = request.GET.get('latitude', '')
 
-    url = f"https://api.tomtom.com/search/2/categorySearch/hospital.json?key=2ly4DpPSnxYPBb1r8Ic3xpztZNzYAZXq&lat={latitude}&lon={longitude}"
+    url = f"https://api.tomtom.com/search/2/categorySearch/hospital.json?key={api_key}&lat={latitude}&lon={longitude}"
 
     try:
         response = requests.get(url)

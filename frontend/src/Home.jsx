@@ -5,7 +5,7 @@ import Footer from "./Footer"
 import Card from './Card';
 
 // import.meta.env.CRAWLER_API_KEY
-
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const Home = ()=>{
 
   const[searchQuery, setSearchQuery] = useState('');
@@ -47,58 +47,67 @@ const Home = ()=>{
         getSearchQuery();
     },[])
 
-    const fetchNearbyHospitals = async () => {
-        const latitude = '49.103569'; // Replace with actual latitude
-        const longitude = '-122.656563'; // Replace with actual longitude
-    
-        try {
-          const response = await fetch(`http://localhost:8000/api/get_nearby_hospitals/?latitude=${latitude}&longitude=${longitude}`);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-          setNearbyHospitals(data.hospitals);
-          initMap(data.hospitals);
-        } catch (error) {
-          console.error('Error fetching nearby hospitals:', error);
+    const fetchNearbyHospitals = async (latitude, longitude) => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/get_nearby_hospitals/?latitude=${latitude}&longitude=${longitude}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-      };
-    
-      useEffect(() => {
-        fetchNearbyHospitals();
-      }, []);
-
-      const initMap = (hospitals) => {
-        const map = new window.google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
-          center: { lat: parseFloat(hospitals[0].latitude), lng: parseFloat(hospitals[0].longitude) }, // Adjust center as needed
-        });
-    
-        hospitals.forEach((hospital) => {
-          new window.google.maps.Marker({
-            position: { lat: parseFloat(hospital.latitude), lng: parseFloat(hospital.longitude) },
-            map,
-            title: hospital.name,
-          });
-        });
-      };
-
-        useEffect(() => {
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCItTySjdIz4RXvv2f4233gc3O8Dso9oX8&libraries=places`;
-    script.async = true;
-    script.onload = () => {
-      // Call function to initialize the map after script is loaded
-      initMap(nearbyHospitals);
+        const data = await response.json();
+        setNearbyHospitals(data.hospitals);
+        initMap(data.hospitals);
+      } catch (error) {
+        console.error('Error fetching nearby hospitals:', error);
+      }
     };
-    document.head.appendChild(script);
 
-    // Clean up script
-    return () => {
-      document.head.removeChild(script);
+    const getUserLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          fetchNearbyHospitals(position.coords.latitude, position.coords.longitude);
+        });
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    }
+
+    useEffect(() => {
+      getUserLocation();
+    }, []);
+
+    const initMap = (hospitals) => {
+      const map = new window.google.maps.Map(document.getElementById('map'), {
+        zoom: 10,
+        center: { lat: parseFloat(hospitals[0].latitude), lng: parseFloat(hospitals[0].longitude) },
+      });
+    
+      hospitals.forEach((hospital) => {
+        const marker = new window.google.maps.Marker({
+          position: { lat: parseFloat(hospital.latitude), lng: parseFloat(hospital.longitude) },
+          map,
+          title: hospital.name,
+        });
+        const infowindow = new window.google.maps.InfoWindow({
+          content: `<h2>${hospital.name}</h2><p>${hospital.address}</p>`,
+        });
+        marker.addListener('click', () => {
+          infowindow.open(map, marker);
+        });
+      });
     };
-  }, [nearbyHospitals]);
-
+      
+    useEffect(() => {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+      script.async = true;
+      script.onload = () => {
+        initMap(nearbyHospitals);
+      };
+      document.head.appendChild(script);
+      return () => {
+        document.head.removeChild(script);
+      };
+    }, [nearbyHospitals]);
     
     return(
         <>
@@ -134,13 +143,14 @@ const Home = ()=>{
                 )) : null}
             </div>
             </div>
+
+            <div id="map" style={{ height: '400px', width: '100%' }}></div>
+            
             <div className="wavy-divider">
                 <svg viewBox="0 0 1440 320">
                     <path fill="#00bfff" fillOpacity="0.7" d="M0,96L48,128C96,160,192,224,288,213.3C384,203,480,117,576,117.3C672,117,768,203,864,213.3C960,224,1056,160,1152,128C1248,96,1344,96,1392,96L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
                 </svg>
             </div>
-
-            <div id="map" style={{ height: '400px', width: '100%' }}></div>
             <Footer/>
         </>
     );
@@ -148,5 +158,3 @@ const Home = ()=>{
 }
 
 export default Home;
-
-
