@@ -4,6 +4,10 @@
 # from django.http import JsonResponse
 # from django.conf import settings
 
+
+
+
+
 # def fetch_health_tips(request):
 #     search_query = request.GET.get('query', 'health tips')
 #     input_query = f"how to reduce {search_query}" 
