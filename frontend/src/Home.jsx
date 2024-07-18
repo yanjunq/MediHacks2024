@@ -47,58 +47,67 @@ const Home = ()=>{
         getSearchQuery();
     },[])
 
-    const fetchNearbyHospitals = async () => {
-        const latitude = '49.103569'; // Replace with actual latitude
-        const longitude = '-122.656563'; // Replace with actual longitude
-    
-        try {
-          const response = await fetch(`http://localhost:8000/api/get_nearby_hospitals/?latitude=${latitude}&longitude=${longitude}`);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-          setNearbyHospitals(data.hospitals);
-          initMap(data.hospitals);
-        } catch (error) {
-          console.error('Error fetching nearby hospitals:', error);
+    const fetchNearbyHospitals = async (latitude, longitude) => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/get_nearby_hospitals/?latitude=${latitude}&longitude=${longitude}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-      };
-    
-      useEffect(() => {
-        fetchNearbyHospitals();
-      }, []);
-
-      const initMap = (hospitals) => {
-        const map = new window.google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
-          center: { lat: parseFloat(hospitals[0].latitude), lng: parseFloat(hospitals[0].longitude) }, // Adjust center as needed
-        });
-    
-        hospitals.forEach((hospital) => {
-          new window.google.maps.Marker({
-            position: { lat: parseFloat(hospital.latitude), lng: parseFloat(hospital.longitude) },
-            map,
-            title: hospital.name,
-          });
-        });
-      };
-
-        useEffect(() => {
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
-    script.async = true;
-    script.onload = () => {
-      // Call function to initialize the map after script is loaded
-      initMap(nearbyHospitals);
+        const data = await response.json();
+        setNearbyHospitals(data.hospitals);
+        initMap(data.hospitals);
+      } catch (error) {
+        console.error('Error fetching nearby hospitals:', error);
+      }
     };
-    document.head.appendChild(script);
 
-    // Clean up script
-    return () => {
-      document.head.removeChild(script);
+    const getUserLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          fetchNearbyHospitals(position.coords.latitude, position.coords.longitude);
+        });
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+    }
+
+    useEffect(() => {
+      getUserLocation();
+    }, []);
+
+    const initMap = (hospitals) => {
+      const map = new window.google.maps.Map(document.getElementById('map'), {
+        zoom: 10,
+        center: { lat: parseFloat(hospitals[0].latitude), lng: parseFloat(hospitals[0].longitude) },
+      });
+    
+      hospitals.forEach((hospital) => {
+        const marker = new window.google.maps.Marker({
+          position: { lat: parseFloat(hospital.latitude), lng: parseFloat(hospital.longitude) },
+          map,
+          title: hospital.name,
+        });
+        const infowindow = new window.google.maps.InfoWindow({
+          content: `<h2>${hospital.name}</h2><p>${hospital.address}</p>`,
+        });
+        marker.addListener('click', () => {
+          infowindow.open(map, marker);
+        });
+      });
     };
-  }, [nearbyHospitals]);
-
+      
+    useEffect(() => {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+      script.async = true;
+      script.onload = () => {
+        initMap(nearbyHospitals);
+      };
+      document.head.appendChild(script);
+      return () => {
+        document.head.removeChild(script);
+      };
+    }, [nearbyHospitals]);
     
     return(
         <>
@@ -149,5 +158,3 @@ const Home = ()=>{
 }
 
 export default Home;
-
-
