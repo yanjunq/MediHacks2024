@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ValueInput from './ValueInput';
 
 
 
@@ -10,6 +11,8 @@ function Searchbar({getQuery}) {
   const [suggestions, setSuggestions] = useState([]);
   const [id, setID] = useState('');
   const [features, setFeatures] = useState('');
+  const [item, setItem] = useState([])
+  const [formVisible, setVisible] = useState(false);
 
   const handleSearch = async (event) => {
     event.preventDefault();
@@ -40,7 +43,10 @@ function Searchbar({getQuery}) {
     console.log(response.data)
   }
 
-  
+  const showOptions = (item) => {
+    setVisible(true)
+    setItem(item)
+  }
 
   useEffect(() => {
     const initSession = async () =>{
@@ -62,7 +68,7 @@ function Searchbar({getQuery}) {
 
   return (
     <div>
-      <button onClick={acceptTermsOfUse}>
+      <button onClick={() => acceptTermsOfUse}>
         "Agree to terms of services"
       </button>
       <form className="search-bar" onSubmit={handleSearch}>
@@ -76,7 +82,8 @@ function Searchbar({getQuery}) {
           {suggestions.length > 0 && (
           <ul className="suggestions-list">
             {suggestions.map((suggestion, index) => (
-              <li key={index} className="suggestion-item">
+              <li key={index} className="suggestion-item"
+              onClick={() => showOptions(suggestion)}>
                 {suggestion.text}
               </li>
             ))}
@@ -84,6 +91,7 @@ function Searchbar({getQuery}) {
         )}
         <button type="submit" className="search-button">Ask</button>
       </form>
+      {formVisible && (<ValueInput item={item} SessionID={id} />)}
     </div>
   );
 }
